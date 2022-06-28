@@ -7,13 +7,13 @@ object Projet extends App {
     .getOrCreate()
   sparkSession.sparkContext.setLogLevel("ERROR")
 
-  val studentData = sparkSession
+  val transport = sparkSession
     .read
     .options(Map("inferSchema"->"true","header"->"true"))
-    .csv("/Users/ambre/Desktop/student_data.csv")
+    .csv("data/Regularities_by_liaisons_Trains_France.csv")
 
-  studentData.printSchema()
-  studentData.show(truncate = false)
+  transport.printSchema()
+  transport.show(truncate = false)
 
 
 
