@@ -1,6 +1,4 @@
 import org.apache.spark.sql.SparkSession
-import org.apache.spark.sql.functions._
-import org.apache.spark.sql.SparkSession
 
 object Projet extends App {
   val sparkSession = SparkSession.builder()
@@ -10,6 +8,10 @@ object Projet extends App {
   sparkSession.sparkContext.setLogLevel("ERROR")
 
   sparkSession.conf.set("spark.sql.shuffle.partitions","5") // Du mal à comprendre le shuffle
+
+  /**
+   * STATIC
+   */
 
   val transport = sparkSession
     .read.format("csv")
@@ -25,7 +27,7 @@ object Projet extends App {
 
 
   /**
-   * Streaming
+   * STREAMING
    */
 
   // Récupérer le schema static
@@ -43,6 +45,26 @@ object Projet extends App {
     .load("data/Regularities_by_liaisons_Trains_France.csv")
 
   println("Spark is streaming " + transportStream.isStreaming)
+
+  /**
+   * SELECT EXPRESSION
+   */
+
+  val onTimeAndLateTrains = transportStream
+    .selectExpr(
+      "Period",
+      "",
+    )
+    .groupBy()
+    .sum()
+
+
+
+  /**
+   * WRITE STREAM
+   */
+
+  transportStream
 
 
 }
