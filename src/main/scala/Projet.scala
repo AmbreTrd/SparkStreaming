@@ -53,10 +53,13 @@ object Projet extends App {
   val onTimeAndLateTrains = transportStream
     .selectExpr(
       "Period",
-      "",
+      "Number of expected circulations",
+      "(Number of expected circulations - Number of late trains at departure) as trains_on_time",
+      "Number of late trains at departure"
     )
-    .groupBy()
-    .sum()
+    .show()
+    //.groupBy()
+    //.sum()
 
 
 
