@@ -1,4 +1,5 @@
 import org.apache.spark.sql.SparkSession
+import org.apache.spark.sql.functions.{window, column, desc, col}
 
 object LifeWorkDeath extends App {
 
@@ -8,7 +9,7 @@ object LifeWorkDeath extends App {
     .getOrCreate()
   sparkSession.sparkContext.setLogLevel("ERROR")
 
-  sparkSession.conf.set("spark.sql.shuffle.partitions","5") // Du mal à comprendre le shuffle
+  sparkSession.conf.set("spark.sql.shuffle.partitions","5")
 
   /**
    * STATIC
@@ -47,11 +48,11 @@ object LifeWorkDeath extends App {
   println("Spark is streaming " + lifeWorkDeathStream.isStreaming)
 
   /**
-   * SELECT EXPRESSION
+   * ANALYSES
    */
 
   // Répartition de Gender
-
+"""
   val genderRepartition = lifeWorkDeathStream
     .selectExpr(
       "Id", "Gender"
@@ -59,7 +60,15 @@ object LifeWorkDeath extends App {
     .groupBy("Gender")
     .sum()
   genderRepartition.show()
+"""
 
+  val query = lifeWorkDeathStream.groupBy("Gender").count()
+
+  query.writeStream
+    .outputMode("complete")
+    .format("console")
+    .start()
+    .awaitTermination()
 
 
   /**

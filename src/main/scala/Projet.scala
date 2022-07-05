@@ -13,17 +13,13 @@ object Projet extends App {
    * STATIC
    */
 
-  val transport = sparkSession
+  val supermarket = sparkSession
     .read.format("csv")
     .option("header","true")
     .option("inferSchema","true")
-    .load("data/Regularities_by_liaisons_Trains_France.csv")
-  // TODO : Diviser la donnée en amont du lancement du code ?
+    .load("data/supermarket_sales.csv")
 
-  transport.printSchema()
-  transport.show(truncate = false)
-
-  transport.createOrReplaceTempView("retail_table")
+  supermarket.printSchema()
 
 
   /**
@@ -32,34 +28,31 @@ object Projet extends App {
 
   // Récupérer le schema static
 
-  val transportSchema = transport.schema
+  val supermarketSchema = supermarket.schema
 
   // Lecture en streaming
 
-  val transportStream = sparkSession
+  val supermarketStream = sparkSession
     .readStream
-    .schema(transportSchema)
+    .schema(supermarketSchema)
     .format("csv")
     .option("maxFilesPerTrigger","1")
     .option("header","true")
-    .load("data/Regularities_by_liaisons_Trains_France.csv")
+    .load("data/supermarket_sales.csv")
 
-  println("Spark is streaming " + transportStream.isStreaming)
+  println("Spark is streaming " + supermarketStream.isStreaming)
 
   /**
    * SELECT EXPRESSION
    */
 
-  val onTimeAndLateTrains = transportStream
+  val onTimeAndLateTrains = supermarketStream
     .selectExpr(
       "Period",
-      "Number of expected circulations",
-      "(Number of expected circulations - Number of late trains at departure) as trains_on_time",
-      "Number of late trains at departure"
+      "Departure station"
     )
-    .show()
-    //.groupBy()
-    //.sum()
+    .groupBy("Departure station")
+    .sum()
 
 
 
@@ -67,7 +60,7 @@ object Projet extends App {
    * WRITE STREAM
    */
 
-  transportStream
+  supermarketStream
 
 
 }
