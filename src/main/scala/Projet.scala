@@ -7,7 +7,7 @@ object Projet extends App {
     .getOrCreate()
   sparkSession.sparkContext.setLogLevel("ERROR")
 
-  sparkSession.conf.set("spark.sql.shuffle.partitions","5") // Du mal à comprendre le shuffle
+  sparkSession.conf.set("spark.sql.shuffle.partitions","5")
 
   /**
    * STATIC
@@ -46,7 +46,7 @@ object Projet extends App {
    * SELECT EXPRESSION
    */
 
-  val onTimeAndLateTrains = supermarketStream
+"""  val onTimeAndLateTrains = supermarketStream
     .selectExpr(
       "Period",
       "Departure station"
@@ -54,7 +54,7 @@ object Projet extends App {
     .groupBy("Departure station")
     .sum()
 
-
+"""
 
   /**
    * WRITE STREAM
